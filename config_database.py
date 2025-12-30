@@ -56,7 +56,7 @@ GROSS_MARGIN_ALVO = 40.0
 
 # ==================== CONFIGURAÇÕES DE CUSTOS ====================
 
-ENCARGOS_PERCENTUAL = 64.85  # 64,85% sobre salário base
+ENCARGOS_PERCENTUAL = 64.853851583333  # Total de encargos sobre salário base
 CUSTO_INDIRETO_PERCENTUAL = 0.00  # 0,00%
 
 BENEFICIOS = {
@@ -121,20 +121,21 @@ BITRIBUTACAO = {
 }
 
 # ==================== ENCARGOS DETALHADOS ====================
+# Valores com precisão completa conforme cálculos da planilha
 
 ENCARGOS_DETALHADOS = {
-    "FGTS": 8.00,
-    "FGTS_13": 0.67,
-    "FGTS_ferias": 0.89,
-    "INSS_GPS": 26.30,
-    "INSS_13": 2.19,
-    "INSS_ferias": 2.92,
-    "prov_13_salario": 8.33,
-    "prov_ferias": 11.11,
-    "aviso_previo": 1.32,
-    "auxilio_doenca": 0.55,
-    "desp_rescisao": 2.57,
-    "total": 64.85
+    "FGTS": 8.000000000000,                    # 8% s/salário base
+    "FGTS_13": 0.666666666667,                 # 8% s/13º
+    "FGTS_ferias": 0.888886666667,             # 8% s/férias
+    "INSS_GPS": 26.300000000000,               # 26,3% s/sal base
+    "INSS_13": 2.191666666667,                 # 26,3% s/13º
+    "INSS_ferias": 2.922214916667,             # 26,3% s/férias
+    "prov_13_salario": 8.333333333333,         # 1/12 s/sal base
+    "prov_ferias": 11.111083333333,            # 11,11% s/sal base
+    "aviso_previo": 1.320000000000,            # 1,32% s/sal base
+    "auxilio_doenca": 0.550000000000,          # 0,55% s/sal base
+    "desp_rescisao": 2.570000000000,           # 2,57% s/sal base
+    "total": 64.853851583333                   # Soma de todos os encargos
 }
 
 # ==================== TOOLS (MOEDA) ====================
