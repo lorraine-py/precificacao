@@ -652,19 +652,67 @@ def renderizar_fase_2():
 
     # Tabela de Resumo (Dataframe com suporte a Decimal)
     if st.session_state.lista_equipe:
-        df = pd.DataFrame(st.session_state.lista_equipe)
+        st.subheader("Equipe Adicionada")
 
-        def calc_financeiro(row):
-            s_val = Decimal(str(BASE_SALARIAL.get(row['Perfil'], {}).get(row['Nível'], {}).get(regua_id, 0)))
+        # Lista de funcionários a remover (para processar após o loop)
+        funcionarios_para_remover = []
+
+        # Cabeçalho da tabela
+        col_h1, col_h2, col_h3, col_h4, col_h5, col_h6, col_h7, col_h8 = st.columns([2, 1.5, 1, 1.5, 1.5, 1.5, 1.5, 1])
+        with col_h1:
+            st.markdown("**Perfil**")
+        with col_h2:
+            st.markdown("**Nível**")
+        with col_h3:
+            st.markdown("**Qtd**")
+        with col_h4:
+            st.markdown("**Dedicação**")
+        with col_h5:
+            st.markdown("**Salário Base**")
+        with col_h6:
+            st.markdown("**Custo Hora**")
+        with col_h7:
+            st.markdown("**Custo Total**")
+        with col_h8:
+            st.markdown("**Ação**")
+
+        total_custo_projeto = Decimal("0")
+
+        # Renderizar cada funcionário com botão de remover
+        for idx, func in enumerate(st.session_state.lista_equipe):
+            s_val = Decimal(str(BASE_SALARIAL.get(func['Perfil'], {}).get(func['Nível'], {}).get(regua_id, 0)))
             c_h = ((s_val * FATOR_ENCARGOS) + BENEFICIOS_FIXOS) / HORAS_MES if s_val > 0 else Decimal("0")
-            t_h = Decimal(str(row['Qtd'])) * (Decimal(str(row['Dedicação %'])) / Decimal("100")) * HORAS_MES
+            t_h = Decimal(str(func['Qtd'])) * (Decimal(str(func['Dedicação %'])) / Decimal("100")) * HORAS_MES
             c_t = c_h * t_h
-            # Retornamos como float apenas para o Streamlit exibir no gráfico/tabela
-            return pd.Series([float(s_val), float(c_h), float(c_t)], index=['Salário Base', 'Custo Hora', 'Custo Total'])
+            total_custo_projeto += c_t
 
-        df[['Salário Base', 'Custo Hora', 'Custo Total']] = df.apply(calc_financeiro, axis=1)
-        st.data_editor(df, use_container_width=True, disabled=True)
-        st.metric("Soma Total do Projeto", f"R$ {df['Custo Total'].sum():,.2f}")
+            col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([2, 1.5, 1, 1.5, 1.5, 1.5, 1.5, 1])
+            with col1:
+                st.text(func['Perfil'])
+            with col2:
+                st.text(func['Nível'])
+            with col3:
+                st.text(str(func['Qtd']))
+            with col4:
+                st.text(f"{func['Dedicação %']}%")
+            with col5:
+                st.text(f"R$ {s_val:,.2f}")
+            with col6:
+                st.text(f"R$ {c_h:.2f}")
+            with col7:
+                st.text(f"R$ {c_t:,.2f}")
+            with col8:
+                if st.button("🗑️", key=f"remover_{idx}", help="Remover funcionário"):
+                    funcionarios_para_remover.append(idx)
+
+        # Processar remoções (de trás para frente para não afetar os índices)
+        if funcionarios_para_remover:
+            for idx in sorted(funcionarios_para_remover, reverse=True):
+                st.session_state.lista_equipe.pop(idx)
+            st.rerun()
+
+        st.markdown("---")
+        st.metric("Soma Total do Projeto", f"R$ {total_custo_projeto:,.2f}")
         # Botão Voltar e Avançar
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 1, 1])
