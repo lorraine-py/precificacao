@@ -609,13 +609,20 @@ def renderizar_fase_2():
     regua_id = mapa_regua[regua_selecionada]
 
     # Entrada de Dados
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         perfil = st.selectbox("Perfil", list(BASE_SALARIAL.keys()))
         nivel = st.selectbox("Nível", ["1. Junior", "2. Pleno", "3. Sênior", "4. Líder", "5. Head", "6. Especialista"])
     with col2:
         qtd_func = st.number_input("Quantidade de Funcionários", min_value=1, value=1)
         dedicacao = st.slider("Dedicação (%)", 0, 100, 50)
+    with col3:
+        # Seleção de Serviço
+        servicos_disponiveis = list(MAPEAMENTO_OFERTAS.keys())
+        servico_selecionado = st.selectbox("Serviço", servicos_disponiveis)
+        # Oferta Brivia (exibida automaticamente baseada no serviço)
+        oferta_brivia = MAPEAMENTO_OFERTAS.get(servico_selecionado, "")
+        st.text_input("Oferta Brivia", value=oferta_brivia, disabled=True, help="Preenchido automaticamente")
 
     # --- CÁLCULOS COM PRECISÃO DE 12 CASAS ---
     # Buscamos o salário e convertemos para Decimal imediatamente
@@ -635,18 +642,22 @@ def renderizar_fase_2():
 
     # Métricas com exibição controlada (mas o valor interno é exato)
     st.markdown("---")
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Salário Base", f"R$ {salario_base:,.2f}")
     m2.metric("Custo Hora (Preciso)", f"R$ {custo_hora:.8f}") # Exibe 8 casas para bater com a célula J10
     m3.metric("Total Horas", f"{total_horas:.1f}h")
-    m4.metric("Custo Total", f"R$ {custo_total:,.2f}") 
-    
+    m4.metric("Custo Total", f"R$ {custo_total:,.2f}")
+    # Preço de Venda - placeholder para cálculo futuro
+    preco_venda = Decimal("0")  # TODO: Substituir pela fórmula real quando definida
+    m5.metric("Preço de Venda", f"R$ {preco_venda:,.2f}", help="Cálculo a ser definido")
+
     # Debug para você ver as 12 casas decimais do Custo Total
     st.caption(f"Valor Bruto Custo Total: R$ {custo_total:.12f}")
 
     if st.button("＋ Adicionar Funcionário à Equipe", use_container_width=True):
         st.session_state.lista_equipe.append({
-            "Perfil": perfil, "Nível": nivel, "Qtd": qtd_func, "Dedicação %": dedicacao
+            "Perfil": perfil, "Nível": nivel, "Qtd": qtd_func, "Dedicação %": dedicacao,
+            "Serviço": servico_selecionado, "Oferta Brivia": oferta_brivia
         })
         st.rerun()
 
@@ -659,10 +670,12 @@ def renderizar_fase_2():
             c_h = ((s_val * FATOR_ENCARGOS) + BENEFICIOS_FIXOS) / HORAS_MES if s_val > 0 else Decimal("0")
             t_h = Decimal(str(row['Qtd'])) * (Decimal(str(row['Dedicação %'])) / Decimal("100")) * HORAS_MES
             c_t = c_h * t_h
+            # Preço de Venda - placeholder (a fórmula será definida posteriormente)
+            p_v = Decimal("0")  # TODO: Substituir pela fórmula real quando definida
             # Retornamos como float apenas para o Streamlit exibir no gráfico/tabela
-            return pd.Series([float(s_val), float(c_h), float(c_t)], index=['Salário Base', 'Custo Hora', 'Custo Total'])
+            return pd.Series([float(s_val), float(c_h), float(c_t), float(p_v)], index=['Salário Base', 'Custo Hora', 'Custo Total', 'Preço de Venda'])
 
-        df[['Salário Base', 'Custo Hora', 'Custo Total']] = df.apply(calc_financeiro, axis=1)
+        df[['Salário Base', 'Custo Hora', 'Custo Total', 'Preço de Venda']] = df.apply(calc_financeiro, axis=1)
         st.data_editor(df, use_container_width=True, disabled=True)
         st.metric("Soma Total do Projeto", f"R$ {df['Custo Total'].sum():,.2f}")
         # Botão Voltar e Avançar
