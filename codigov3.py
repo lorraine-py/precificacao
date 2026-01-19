@@ -574,10 +574,9 @@ getcontext().prec = 20
 
 def renderizar_fase_2():
     st.header("FASE 2: Equipe CLT")
-    st.markdown('<div class="brivia-alerta">Cálculos de alta precisão (Decimal) para grandes volumes financeiros.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brivia-alerta">Insira aqui os funcionários necessários para o serviço.</div>', unsafe_allow_html=True)
 
-    # --- MOTOR DE ALTA PRECISÃO (Sincronizado com 12 casas do Sheets) ---
-    # Usamos Decimal("valor") para garantir que não haja perda no input
+    # --- MOTOR DE ALTA PRECISÃO ---
     prov_13 = Decimal("100") / Decimal("12")
     prov_ferias = Decimal("11.1110833333333") 
 
@@ -592,7 +591,7 @@ def renderizar_fase_2():
         "prov_ferias": prov_ferias,
         "aviso_previo": Decimal("1.32"),
         "auxilio_doenca": Decimal("0.55"),
-        "desp_rescisao": Decimal("2.57") # Valor exato da sua tabela de critérios
+        "desp_rescisao": Decimal("2.57") 
     }
 
     FATOR_ENCARGOS = Decimal("1") + (sum(encargos_fpa.values()) / Decimal("100"))
@@ -609,74 +608,117 @@ def renderizar_fase_2():
     regua_id = mapa_regua[regua_selecionada]
 
     # Entrada de Dados
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         perfil = st.selectbox("Perfil", list(BASE_SALARIAL.keys()))
         nivel = st.selectbox("Nível", ["1. Junior", "2. Pleno", "3. Sênior", "4. Líder", "5. Head", "6. Especialista"])
     with col2:
         qtd_func = st.number_input("Quantidade de Funcionários", min_value=1, value=1)
         dedicacao = st.slider("Dedicação (%)", 0, 100, 50)
+    with col3:
+        servicos_disponiveis = list(MAPEAMENTO_OFERTAS.keys())
+        servico_selecionado = st.selectbox("Serviço", servicos_disponiveis)
+        oferta_brivia = MAPEAMENTO_OFERTAS.get(servico_selecionado, "")
+        st.text_input("Oferta Brivia", value=oferta_brivia, disabled=True, help="Preenchido automaticamente")
 
-    # --- CÁLCULOS COM PRECISÃO DE 12 CASAS ---
-    # Buscamos o salário e convertemos para Decimal imediatamente
+    # --- CÁLCULOS DA ENTRADA ATUAL ---
     sal_raw = BASE_SALARIAL.get(perfil, {}).get(nivel, {}).get(regua_id, 0)
     salario_base = Decimal(str(sal_raw))
     
     total_horas = Decimal(str(qtd_func)) * (Decimal(str(dedicacao)) / Decimal("100")) * HORAS_MES
     
     if salario_base > 0:
-        # Custo Hora calculado exatamente como a célula J10
         custo_hora = ((salario_base * FATOR_ENCARGOS) + BENEFICIOS_FIXOS) / HORAS_MES
-        # Custo Total calculado exatamente como a célula K10 (9.868,02915156)
         custo_total = custo_hora * total_horas
     else:
         custo_hora = Decimal("0")
         custo_total = Decimal("0")
 
-    # Métricas com exibição controlada (mas o valor interno é exato)
+    # Métricas de visualização imediata
     st.markdown("---")
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Salário Base", f"R$ {salario_base:,.2f}")
-    m2.metric("Custo Hora (Preciso)", f"R$ {custo_hora:.8f}") # Exibe 8 casas para bater com a célula J10
+    m2.metric("Custo Hora", f"R$ {custo_hora:.8f}")
     m3.metric("Total Horas", f"{total_horas:.1f}h")
-    m4.metric("Custo Total", f"R$ {custo_total:,.2f}") 
+    m4.metric("Custo Total", f"R$ {custo_total:,.2f}")
     
-    # Debug para você ver as 12 casas decimais do Custo Total
+    preco_venda = Decimal("0")
+    m5.metric("Preço de Venda", f"R$ {preco_venda:,.2f}", help="Cálculo a ser definido")
+
     st.caption(f"Valor Bruto Custo Total: R$ {custo_total:.12f}")
 
     if st.button("＋ Adicionar Funcionário à Equipe", use_container_width=True):
         st.session_state.lista_equipe.append({
-            "Perfil": perfil, "Nível": nivel, "Qtd": qtd_func, "Dedicação %": dedicacao
+            "Perfil": perfil, "Nível": nivel, "Qtd": qtd_func, "Dedicação %": dedicacao,
+            "Serviço": servico_selecionado, "Oferta Brivia": oferta_brivia
         })
         st.rerun()
 
-    # Tabela de Resumo (Dataframe com suporte a Decimal)
+    # ==============================================================================
+    # TABELA DE RESUMO (MANUAL COM BOTÕES DE REMOVER)
+    # ==============================================================================
     if st.session_state.lista_equipe:
-        df = pd.DataFrame(st.session_state.lista_equipe)
+        
+        funcionarios_para_remover = []
 
-        def calc_financeiro(row):
-            s_val = Decimal(str(BASE_SALARIAL.get(row['Perfil'], {}).get(row['Nível'], {}).get(regua_id, 0)))
+        st.markdown("### Detalhamento da Equipe")
+        
+        # Cabeçalho
+        col_h1, col_h2, col_h3, col_h4, col_h5, col_h6, col_h7, col_h8 = st.columns([2, 1.5, 1, 1.5, 1.5, 1.5, 1.5, 1])
+        with col_h1: st.markdown("**Perfil**")
+        with col_h2: st.markdown("**Nível**")
+        with col_h3: st.markdown("**Qtd**")
+        with col_h4: st.markdown("**Dedicação**")
+        with col_h5: st.markdown("**Salário Base**")
+        with col_h6: st.markdown("**Custo Hora**")
+        with col_h7: st.markdown("**Custo Total**")
+        with col_h8: st.markdown("")
+
+        total_custo_projeto = Decimal("0")
+
+        # Loop para criar as linhas da tabela
+        for idx, func in enumerate(st.session_state.lista_equipe):
+            s_val = Decimal(str(BASE_SALARIAL.get(func['Perfil'], {}).get(func['Nível'], {}).get(regua_id, 0)))
             c_h = ((s_val * FATOR_ENCARGOS) + BENEFICIOS_FIXOS) / HORAS_MES if s_val > 0 else Decimal("0")
-            t_h = Decimal(str(row['Qtd'])) * (Decimal(str(row['Dedicação %'])) / Decimal("100")) * HORAS_MES
+            t_h = Decimal(str(func['Qtd'])) * (Decimal(str(func['Dedicação %'])) / Decimal("100")) * HORAS_MES
             c_t = c_h * t_h
-            # Retornamos como float apenas para o Streamlit exibir no gráfico/tabela
-            return pd.Series([float(s_val), float(c_h), float(c_t)], index=['Salário Base', 'Custo Hora', 'Custo Total'])
+            total_custo_projeto += c_t
 
-        df[['Salário Base', 'Custo Hora', 'Custo Total']] = df.apply(calc_financeiro, axis=1)
-        st.data_editor(df, use_container_width=True, disabled=True)
-        st.metric("Soma Total do Projeto", f"R$ {df['Custo Total'].sum():,.2f}")
-        # Botão Voltar e Avançar
+            col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([2, 1.5, 1, 1.5, 1.5, 1.5, 1.5, 1])
+            with col1: st.text(func['Perfil'])
+            with col2: st.text(func['Nível'])
+            with col3: st.text(str(func['Qtd']))
+            with col4: st.text(f"{func['Dedicação %']}%")
+            with col5: st.text(f"R$ {s_val:,.2f}")
+            with col6: st.text(f"R$ {c_h:.2f}")
+            with col7: st.text(f"R$ {c_t:,.2f}")
+            with col8:
+                if st.button("🗑️", key=f"remover_{idx}", help="Remover funcionário"):
+                    funcionarios_para_remover.append(idx)
+
+        # Lógica de remoção
+        if funcionarios_para_remover:
+            for idx in sorted(funcionarios_para_remover, reverse=True):
+                st.session_state.lista_equipe.pop(idx)
+            st.rerun()
+
         st.markdown("---")
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col1:
+        # Exibição do Total (Uma única vez)
+        st.metric("Soma Total do Projeto", f"R$ {total_custo_projeto:,.2f}")
+
+        # BOTÕES DE NAVEGAÇÃO
+        st.markdown("---")
+        col_nav1, col_nav2, col_nav3 = st.columns([1, 1, 1])
+        with col_nav1:
             if st.button("← Voltar para Fase 1", use_container_width=True):
                 st.session_state.fase_atual = 1
                 st.rerun()
-        with col3:
+        with col_nav3:
             if st.button("Avançar para Fase 3 →", type="primary", use_container_width=True):
                 st.session_state.fase_atual = 3
                 st.session_state.fase_max_concluida = max(st.session_state.fase_max_concluida, 3)
                 st.rerun()
+
     else:
         st.info("Adicione funcionários à equipe para continuar")
 
