@@ -16,20 +16,20 @@ TIPOS_SERVICO = [
 
 EMPRESAS_TRIBUTACAO = {
     "Malagueta - Comunicação": {"empresa": "Malagueta", "servico": "Comunicação", "aliquota": 8.65},
-    "Habanero - Tecnologia": {"empresa": "Habanero", "servico": "Tecnologia", "aliquota": 6.65},
+    "Habanero - Tecnologia": {"empresa": "Habanero", "servico": "Tecnologia", "aliquota": 6.55},
     "Habanero - Comunicação": {"empresa": "Habanero", "servico": "Comunicação", "aliquota": 14.25},
-    "Brivia - Tecnologia": {"empresa": "Brivia", "servico": "Tecnologia", "aliquota": 6.65},
+    "Brivia - Tecnologia": {"empresa": "Brivia", "servico": "Tecnologia", "aliquota": 5.65},
     "Brivia - Comunicação": {"empresa": "Brivia", "servico": "Comunicação", "aliquota": 11.25},
     "Brivia - Tecnologia - Exportação": {"empresa": "Brivia", "servico": "Tecnologia - Exportação", "aliquota": 0.00},
     "Brivia - Comunicação - Exportação": {"empresa": "Brivia", "servico": "Comunicação - Exportação", "aliquota": 0.00},
-    "Dez - Tecnologia": {"empresa": "Dez", "servico": "Tecnologia", "aliquota": 6.65},
+    "Dez - Tecnologia": {"empresa": "Dez", "servico": "Tecnologia", "aliquota": 5.65},
     "Dez - Comunicação": {"empresa": "Dez", "servico": "Comunicação", "aliquota": 11.25},
-    "Heads RS - Tecnologia": {"empresa": "Heads RS", "servico": "Tecnologia", "aliquota": 6.65},
+    "Heads RS - Tecnologia": {"empresa": "Heads RS", "servico": "Tecnologia", "aliquota": 5.65},
     "Heads RS - Comunicação": {"empresa": "Heads RS", "servico": "Comunicação", "aliquota": 11.25},
     "Heads PR - Tecnologia": {"empresa": "Heads PR", "servico": "Tecnologia", "aliquota": 8.65},
     "Heads PR - Comunicação": {"empresa": "Heads PR", "servico": "Comunicação", "aliquota": 14.25},
     "Briviacom RS - Tecnologia": {"empresa": "Briviacom RS", "servico": "Tecnologia", "aliquota": 8.65},
-    "Briviacom RS - Comunicação": {"empresa": "Briviacom RS", "servico": "Comunicação", "aliquota": 14.25},
+    "Briviacom RS - Comunicação": {"empresa": "Briviacom RS", "servico": "Comunicação", "aliquota": 11.25},
     "Briviacom Brasília - Tecnologia": {"empresa": "Briviacom Brasília", "servico": "Tecnologia", "aliquota": 8.65},
     "Briviacom Brasília - Comunicação": {"empresa": "Briviacom Brasília", "servico": "Comunicação", "aliquota": 14.25},
 }
@@ -53,6 +53,146 @@ LINHAS_CUSTOS = [
 ]
 
 GROSS_MARGIN_ALVO = 40.0
+
+# ==================== CONFIGURAÇÕES DE CUSTOS ====================
+
+ENCARGOS_PERCENTUAL = 64.853851583333  # Total de encargos sobre salário base
+CUSTO_INDIRETO_PERCENTUAL = 0.00  # 0,00%
+
+BENEFICIOS = {
+    "vale_refeicao": 654.00,
+    "seguro_vida": 8.95,
+    "plano_saude": 380.00,
+    "home_office": 120.00,
+    "total": 1162.95
+}
+
+ESTRUTURA = {
+    "licencas": 541.73,
+    "equipamento_depreciacao": 200.00,
+    "total": 741.73
+}
+
+DEPRECIACAO = 0.00
+QUANTIDADE_HORAS_MES = 170
+
+# ==================== IMPOSTOS POR TIPO DE SERVIÇO ====================
+
+IMPOSTOS_SERVICO = {
+    "Comunicação": {
+        "ISSQN": 2.00,
+        "PIS": 1.65,
+        "COFINS": 7.60,
+        "total": 11.25
+    },
+    "Tecnologia": {
+        "ISSQN": 2.00,
+        "PIS": 0.65,
+        "COFINS": 3.00,
+        "total": 5.65
+    }
+}
+
+# ==================== BITRIBUTAÇÃO ====================
+
+BITRIBUTACAO = {
+    "Nacional": {
+        "IOF": 0.00,
+        "CIDE": 0.00,
+        "ISS": 2.00,
+        "INSS": 4.50,
+        "PIS": 0.65,
+        "COFINS": 3.00,
+        "IRRF": 34.00,
+        "CSLL": 0.00,
+        "total": 44.15
+    },
+    "Internacional": {
+        "IOF": 0.00,
+        "CIDE": 0.00,
+        "ISS": 2.00,
+        "INSS": 4.50,
+        "PIS": 1.65,
+        "COFINS": 7.60,
+        "IRRF": 25.00,
+        "CSLL": 9.00,
+        "total": 49.75
+    }
+}
+
+# ==================== ENCARGOS DETALHADOS ====================
+# Valores com precisão completa conforme cálculos da planilha
+
+ENCARGOS_DETALHADOS = {
+    "FGTS": 8.000000000000,                    # 8% s/salário base
+    "FGTS_13": 0.666666666667,                 # 8% s/13º
+    "FGTS_ferias": 0.888886666667,             # 8% s/férias
+    "INSS_GPS": 26.300000000000,               # 26,3% s/sal base
+    "INSS_13": 2.191666666667,                 # 26,3% s/13º
+    "INSS_ferias": 2.922214916667,             # 26,3% s/férias
+    "prov_13_salario": 8.333333333333,         # 1/12 s/sal base
+    "prov_ferias": 11.111083333333,            # 11,11% s/sal base
+    "aviso_previo": 1.320000000000,            # 1,32% s/sal base
+    "auxilio_doenca": 0.550000000000,          # 0,55% s/sal base
+    "desp_rescisao": 2.570000000000,           # 2,57% s/sal base
+    "total": 64.853851583333                   # Soma de todos os encargos
+}
+
+# ==================== TOOLS (MOEDA) ====================
+
+TOOLS_MOEDA = ["Nacional", "Internacional"]
+MOEDA_NACIONAL = "Dólar"
+MOEDA_INTERNACIONAL = "Euro"
+
+# ==================== NÍVEIS SALARIAIS POR REGIÃO ====================
+
+NIVEIS_SALARIAIS = {
+    "1. Junior": {
+        "SP_RJ_BSB_Step2": 3740,
+        "SP_RJ_BSB_Step3": 4206,
+        "Outros_Est_Step2": 3142,
+        "Outros_Est_Step3": 3533,
+        "RS_Step2": 2992,
+        "RS_Step3": 3365,
+        "Media_RS_SP_Step3": 3785
+    },
+    "2. Pleno": {
+        "SP_RJ_BSB_Step2": 5374,
+        "SP_RJ_BSB_Step3": 6044,
+        "Outros_Est_Step2": 4514,
+        "Outros_Est_Step3": 5077,
+        "RS_Step2": 4299,
+        "RS_Step3": 4835,
+        "Media_RS_SP_Step3": 5440
+    },
+    "3. Sênior": {
+        "SP_RJ_BSB_Step2": 7722,
+        "SP_RJ_BSB_Step3": 8685,
+        "Outros_Est_Step2": 6487,
+        "Outros_Est_Step3": 7296,
+        "RS_Step2": 6178,
+        "RS_Step3": 6948,
+        "Media_RS_SP_Step3": 7817
+    },
+    "4. Líder": {
+        "SP_RJ_BSB_Step2": 10775,
+        "SP_RJ_BSB_Step3": 12480,
+        "Outros_Est_Step2": 9051,
+        "Outros_Est_Step3": 10483,
+        "RS_Step2": 8620,
+        "RS_Step3": 9984,
+        "Media_RS_SP_Step3": 11232
+    },
+    "5. Head": {
+        "SP_RJ_BSB_Step2": 16715,
+        "SP_RJ_BSB_Step3": 19360,
+        "Outros_Est_Step2": 14040,
+        "Outros_Est_Step3": 16263,
+        "RS_Step2": 13372,
+        "RS_Step3": 15488,
+        "Media_RS_SP_Step3": 17424
+    }
+}
 
 # ==================== BASE SALARIAL COMPLETA (MERCER) ====================
 
@@ -395,9 +535,60 @@ BASE_SALARIAL = {
     }
 }
 
+# ==================== PILARES DE OFERTA ====================
+
+PILARES_OFERTA = ["COMMUNICATION", "EXPERIENCE", "STRATEGY"]
+
 # ==================== MAPEAMENTO DE OFERTAS BRIVIA ====================
 
 MAPEAMENTO_OFERTAS = {
+    # COMMUNICATION
+    "COMMUNICATION - Ad Campaign": "Communication & Advertising Management",
+    "COMMUNICATION - Always on Communication": "Communication & Advertising Management",
+    "COMMUNICATION - Always on Media": "Media Management",
+    "COMMUNICATION - Production": "Production Management",
+    "COMMUNICATION - Performance Media": "Performance Management",
+    "COMMUNICATION - Customer Relationship Strategy": "CRM",
+    "COMMUNICATION - Customer Relationship Management": "CRM",
+    "COMMUNICATION - Social Media & Community Management": "Social Media",
+    "COMMUNICATION - Social Listening": "Social Media",
+    "COMMUNICATION - SAC 3.0": "CX Management",
+    "COMMUNICATION - Customer Journey Management": "CX Management",
+    "COMMUNICATION - Outsourcing para entregas/perfis de comunicação": "TaaS Com",
+    # EXPERIENCE
+    "EXPERIENCE - Digital Channels Design": "Experience Design",
+    "EXPERIENCE - Digital Channels Development": "Experience Development",
+    "EXPERIENCE - Growth Squad": "Growth Marketing",
+    "EXPERIENCE - Growth Sprint": "Growth Marketing",
+    "EXPERIENCE - Content Marketing Management": "Content Marketing",
+    "EXPERIENCE - Inbound & Outbound Marketing": "Content Marketing",
+    "EXPERIENCE - Cloud Computing": "IT Projects & Consulting",
+    "EXPERIENCE - DevSecOps": "IT Projects & Consulting",
+    "EXPERIENCE - Engineering Consulting": "IT Projects & Consulting",
+    "EXPERIENCE - Baseline Services/ ITSM": "IT Projects & Consulting",
+    "EXPERIENCE - Discovery Squad": "Digital Factory",
+    "EXPERIENCE - Delivery Squad": "Digital Factory",
+    "EXPERIENCE - Martech Consulting & Implementation": "Platforms & Partnerships",
+    "EXPERIENCE - Outsourcing para entrega/perfis de tecnologia": "TaaS Tech",
+    # STRATEGY
+    "STRATEGY - Estratégia e Propósito": "Branding",
+    "STRATEGY - Naming & Identidade": "Branding",
+    "STRATEGY - Arquitetura de Marca": "Branding",
+    "STRATEGY - Digital Maturity Assessment": "Digital Transformation",
+    "STRATEGY - Customer Journey Mapping": "CX Strategy & Consulting",
+    "STRATEGY - Research": "CX Strategy & Consulting",
+    "STRATEGY - Discovery & Strategy": "Business Strategy & Consulting",
+    "STRATEGY - Data Discovery & Roadmap Strategy": "Data Intelligence",
+    "STRATEGY - Data Architecture": "Data Intelligence",
+    "STRATEGY - Strategic Data Analytics Process": "Data Intelligence",
+    "STRATEGY - Data Analytics Process": "Data Factory",
+    "STRATEGY - Data Visualization": "Data Factory",
+    "STRATEGY - Listening and Monitoring": "Data Factory",
+    "STRATEGY - Predicting Analysis & Artificial Intelligence Process": "Data Factory",
+}
+
+# Mapeamento simplificado (retrocompatibilidade)
+MAPEAMENTO_OFERTAS_SIMPLES = {
     "Ad Campaign": "Communication & Advertising Management",
     "Always on Communication": "Communication & Advertising Management",
     "Always on Media": "Media Management",
@@ -438,6 +629,61 @@ MAPEAMENTO_OFERTAS = {
     "Data Visualization": "Data Factory",
     "Listening and Monitoring": "Data Factory",
     "Predicting Analysis & Artificial Intelligence Process": "Data Factory"
+}
+
+# ==================== OFERTAS POR PILAR ====================
+
+OFERTAS_POR_PILAR = {
+    "COMMUNICATION": [
+        "Communication & Advertising Management",
+        "Media Management",
+        "Production Management",
+        "Performance Management",
+        "CRM",
+        "Social Media",
+        "CX Management",
+        "TaaS Com",
+        "Search Engine Marketing",
+        "PIA"
+    ],
+    "EXPERIENCE": [
+        "Experience Design",
+        "Experience Development",
+        "Growth Marketing",
+        "Content Marketing",
+        "IT Projects & Consulting",
+        "Digital Factory",
+        "Platforms & Partnerships",
+        "TaaS Tech"
+    ],
+    "STRATEGY": [
+        "Branding",
+        "Digital Transformation",
+        "CX Strategy & Consulting",
+        "Business Strategy & Consulting",
+        "Data Intelligence",
+        "Data Factory"
+    ]
+}
+
+# ==================== LISTA DE EMPRESAS ====================
+
+EMPRESAS = [
+    "Malagueta",
+    "Habanero",
+    "Brivia",
+    "Dez",
+    "Heads RS",
+    "Heads PR",
+    "Briviacom RS",
+    "Briviacom Brasília"
+]
+
+# ==================== CUSTO FIXO ====================
+
+CUSTO_FIXO = {
+    "percentual_sobre_RB": 12.95,
+    "percentual_CF_sobre_RB": 11.69
 }
 
 # ==================== RECEITA TOTAL POR CENÁRIO ====================
